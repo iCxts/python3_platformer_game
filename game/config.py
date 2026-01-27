@@ -2,6 +2,7 @@ SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 FPS = 60
 TITLE = "meowmeowcat92's Platformer Game"
+TOTAL_LEVELS = 3
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)

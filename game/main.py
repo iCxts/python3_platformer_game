@@ -5,24 +5,22 @@ from config import *
 from player import Player
 from tiles import Platform
 from menu import Menu
+from level import Level
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption(TITLE)
 clock = pygame.time.Clock()
 
-
+current_level = 3
+final_time = 0
 game_state = STATE_MENU
 menu = Menu(SCREEN_WIDTH, SCREEN_HEIGHT)
 
 def start_game():
-    global player, platforms, camera_offset, timer
-    player = Player(100, 100)
-    platforms = [
-        Platform(0, 650, 1280, 70), 
-        Platform(300, 500, 200, 20),
-        Platform(600, 400, 200, 20)
-    ]
+    global player, level, camera_offset, timer
+    level = Level(f"level{current_level}.json")
+    player = Player(level.spawn[0], level.spawn[1])
     camera_offset = [0, 0]
     timer = Timer()
 
@@ -38,6 +36,7 @@ while running:
             if event.key == pygame.K_q:
                 running = False
             if event.key == pygame.K_ESCAPE and game_state == STATE_PLAYING:
+                current_level = 1
                 game_state = STATE_MENU
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
@@ -65,14 +64,23 @@ while running:
                 keys[pygame.K_w] or keys[pygame.K_UP]:
                   timer.start()
 
-        player.update(platforms)
+        player.update(level.platforms)
         camera_offset[0] = player.rect.x - SCREEN_WIDTH // 2
         camera_offset[1] = player.rect.y - SCREEN_HEIGHT // 2
 
-        for platform in platforms:
-            platform.draw(screen, camera_offset)
+        level.draw(screen, camera_offset)
         player.draw(screen, camera_offset)
         timer.draw(screen)
+
+        if level.check_finish(player):
+            timer.stop()
+            current_level += 1
+            if current_level <= TOTAL_LEVELS:
+                start_game()
+            else:
+                current_level = 1
+                game_state = STATE_MENU
+
 
     pygame.display.flip()
     clock.tick(FPS)

@@ -1,0 +1,19 @@
+{
+    "name": "Level 2",
+    "tile_size": 32,
+    "spawn": {"x": 2, "y": 18},
+    "finish": {"x": 95, "y": 5},
+    "tiles": [
+        {"type": "ground", "x": 0, "y": 20, "width": 20, "height": 3},
+        {"type": "platform", "x": 18, "y": 17, "width": 4, "height": 1},
+        {"type": "platform", "x": 26, "y": 14, "width": 4, "height": 1},
+        {"type": "platform", "x": 34, "y": 11, "width": 4, "height": 1},
+        {"type": "platform", "x": 42, "y": 14, "width": 4, "height": 1},
+        {"type": "platform", "x": 50, "y": 17, "width": 4, "height": 1},
+        {"type": "ground", "x": 55, "y": 20, "width": 15, "height": 3},
+        {"type": "platform", "x": 72, "y": 17, "width": 3, "height": 1},
+        {"type": "platform", "x": 78, "y": 14, "width": 3, "height": 1},
+        {"type": "platform", "x": 84, "y": 11, "width": 3, "height": 1},
+        {"type": "platform", "x": 92, "y": 8, "width": 6, "height": 1}
+    ]
+}
