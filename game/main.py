@@ -1,5 +1,6 @@
 import pygame
 import sys
+from timer import Timer
 from config import *
 from player import Player
 from tiles import Platform
@@ -15,7 +16,7 @@ game_state = STATE_MENU
 menu = Menu(SCREEN_WIDTH, SCREEN_HEIGHT)
 
 def start_game():
-    global player, platforms, camera_offset
+    global player, platforms, camera_offset, timer
     player = Player(100, 100)
     platforms = [
         Platform(0, 650, 1280, 70), 
@@ -23,6 +24,7 @@ def start_game():
         Platform(600, 400, 200, 20)
     ]
     camera_offset = [0, 0]
+    timer = Timer()
 
 running = True
 while running:
@@ -54,8 +56,15 @@ while running:
                 pass # implement later
             elif clicked == "leaderboards":
                 pass # implement later
-    
+ 
     elif game_state == STATE_PLAYING:
+        keys = pygame.key.get_pressed()
+        if not timer.running:
+              if keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or \
+                keys[pygame.K_a] or keys[pygame.K_d] or keys[pygame.K_SPACE] or \
+                keys[pygame.K_w] or keys[pygame.K_UP]:
+                  timer.start()
+
         player.update(platforms)
         camera_offset[0] = player.rect.x - SCREEN_WIDTH // 2
         camera_offset[1] = player.rect.y - SCREEN_HEIGHT // 2
@@ -63,6 +72,7 @@ while running:
         for platform in platforms:
             platform.draw(screen, camera_offset)
         player.draw(screen, camera_offset)
+        timer.draw(screen)
 
     pygame.display.flip()
     clock.tick(FPS)
