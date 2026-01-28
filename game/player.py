@@ -1,14 +1,28 @@
 import pygame
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from config import *
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, image=None):
         super().__init__()
-        self.image = load_image("player.png", PLAYER_COLOR, (TILE_SIZE, TILE_SIZE))
+
+        if image:
+            self.image = image
+        else:
+            self.image = load_image(
+                PLAYER_IMAGE,
+                PLAYER_COLOR,
+                (TILE_SIZE, TILE_SIZE)
+            )
         self.rect = self.image.get_rect(topleft=(x, y))
         self.vel_y = 0
         self.on_ground = False
         self.last_jump_time = 0
+        self.facing_right = True
+
     
     def update(self, platforms):
         keys = pygame.key.get_pressed()
