@@ -9,6 +9,7 @@ BLACK = (0, 0, 0)
 SKY_BLUE = (135, 206, 235)
 PLAYER_COLOR = (50, 150, 255)
 PLAYER_IMAGE = "sprites/player.png"
+BACKGROUND_IMAGE = "backgrounds/background.png"
 PLATFORM_COLOR = (0, 0, 0)
 GHOST_ALPHA = 100
 

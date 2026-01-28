@@ -6,7 +6,7 @@ from player import Player
 from tiles import Platform
 from menu import Menu
 from level import Level
-
+from pathlib import Path    
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption(TITLE)
@@ -16,6 +16,15 @@ current_level = 3
 final_time = 0
 game_state = STATE_MENU
 menu = Menu(SCREEN_WIDTH, SCREEN_HEIGHT)
+# recursively search for BACKGROUND_IMAGE starting from this file's directory
+asset_path = next(Path(__file__).parent.rglob(BACKGROUND_IMAGE), None)
+if asset_path is None:
+    raise FileNotFoundError(f"Background image '{BACKGROUND_IMAGE}' not found under {Path(__file__).parent}")
+background = pygame.image.load(str(asset_path)).convert()
+background = pygame.transform.scale(
+    background, (SCREEN_WIDTH, SCREEN_HEIGHT)
+)
+
 
 def start_game():
     global player, level, camera_offset, timer
@@ -42,7 +51,7 @@ while running:
             if event.button == 1:
                 mouse_click = True
 
-    screen.fill(SKY_BLUE)
+    # screen.fill(SKY_BLUE)
     if game_state == STATE_MENU:
         menu.update(mouse_pos)
         menu.draw(screen)
@@ -57,6 +66,7 @@ while running:
                 pass # implement later
  
     elif game_state == STATE_PLAYING:
+        screen.blit(background, (0, 0))
         keys = pygame.key.get_pressed()
         if not timer.running:
               if keys[pygame.K_LEFT] or keys[pygame.K_RIGHT] or \
@@ -69,7 +79,7 @@ while running:
         camera_offset[1] = player.rect.y - SCREEN_HEIGHT // 2
         
         #print(mouse_pos[0] + camera_offset[0], mouse_pos[1] + camera_offset[1])
-
+       
         level.draw(screen, camera_offset)
         player.draw(screen, camera_offset)
         timer.draw(screen)
