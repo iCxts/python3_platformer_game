@@ -67,6 +67,8 @@ while running:
         player.update(level.platforms)
         camera_offset[0] = player.rect.x - SCREEN_WIDTH // 2
         camera_offset[1] = player.rect.y - SCREEN_HEIGHT // 2
+        
+        #print(mouse_pos[0] + camera_offset[0], mouse_pos[1] + camera_offset[1])
 
         level.draw(screen, camera_offset)
         player.draw(screen, camera_offset)

@@ -50,6 +50,7 @@ class Level:
             height = tile.get("height", 1) * tile_size
             self.platforms.append(Platform(x, y, width, height))
 
+
     def check_finish(self, player):
         return player.rect.colliderect(self.finish_line.rect)
         
