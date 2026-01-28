@@ -195,31 +195,6 @@ class GameRoom:
 
 ---
 
-## Level Format (`game/levels/level1.json`)
-
-```json
-{
-    "name": "Level 1",
-    "width": 150,
-    "height": 20,
-    "tile_size": 32,
-    "spawn": {"x": 2, "y": 16},
-    "finish": {"x": 145, "y": 16},
-    "tiles": [
-        {"type": "ground", "x": 0, "y": 18, "width": 150, "height": 2},
-        {"type": "platform", "x": 15, "y": 14, "width": 5, "height": 1},
-        {"type": "platform", "x": 25, "y": 11, "width": 4, "height": 1},
-        {"type": "platform", "x": 35, "y": 8, "width": 3, "height": 1},
-        {"type": "ground", "x": 50, "y": 18, "width": 10, "height": 2},
-        {"type": "platform", "x": 65, "y": 13, "width": 6, "height": 1},
-        {"type": "platform", "x": 80, "y": 10, "width": 4, "height": 1},
-        {"type": "platform", "x": 95, "y": 14, "width": 5, "height": 1},
-        {"type": "platform", "x": 110, "y": 11, "width": 4, "height": 1},
-        {"type": "platform", "x": 125, "y": 8, "width": 3, "height": 1}
-    ]
-}
-```
-
 ## Running the Application
 
 ### 1. Install Dependencies
