@@ -31,8 +31,10 @@ class Player(pygame.sprite.Sprite):
         dx = 0
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             dx = -PLAYER_SPEED
+            self.facing_right = False
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
             dx = PLAYER_SPEED
+            self.facing_right = True
         
         # VERTICAL MOVEMENT
         if (keys[pygame.K_SPACE] or keys[pygame.K_UP] or keys[pygame.K_w]) and self.on_ground and self.last_jump_time + JUMP_COOLDOWN < pygame.time.get_ticks():
@@ -67,6 +69,7 @@ class Player(pygame.sprite.Sprite):
                 self.vel_y = 0
     
     def draw(self, surface, camera_offset):
-        surface.blit(self.image, (self.rect.x - camera_offset[0], self.rect.y - camera_offset[1]))
+        image = self.image if self.facing_right else pygame.transform.flip(self.image, True, False)
+        surface.blit(image, (self.rect.x - camera_offset[0], self.rect.y - camera_offset[1]))
         
 

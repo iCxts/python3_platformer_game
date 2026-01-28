@@ -1,6 +1,7 @@
 {
     "name": "Level 3",
     "tile_size": 32,
+    "death_height": 30,
     "spawn": {"x": 2, "y": 18},
     "finish": {"x": 115, "y": 3},
     "tiles": [

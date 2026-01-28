@@ -31,9 +31,9 @@ class Level:
         
         self.name = data.get("name", "Unnamed Level")
         tile_size = data.get("tile_size", TILE_SIZE)
-
         spawn = data.get("spawn", {"x": 0, "y": 0})
         self.spawn = (spawn["x"] * tile_size, spawn["y"] * tile_size)
+        self.death_height = data.get("death_height", 100) * tile_size
 
         finish = data.get("finish", {"x": 100, "y": 16})
         self.finish_line = FinishLine(
@@ -49,7 +49,6 @@ class Level:
             width = tile.get("width", 1) * tile_size
             height = tile.get("height", 1) * tile_size
             self.platforms.append(Platform(x, y, width, height))
-
 
     def check_finish(self, player):
         return player.rect.colliderect(self.finish_line.rect)
