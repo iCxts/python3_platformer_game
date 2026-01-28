@@ -1,2 +1,4 @@
 PROJECT_STRUCTURE.md
 game/__pycache__/
+.DS_Store
+game/.DS_Store
