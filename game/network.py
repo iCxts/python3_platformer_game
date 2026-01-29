@@ -46,7 +46,7 @@ class Network:
             self.countdown = data.get("count", 0)
 
         @self.sio.on("race_start")
-        def on_race_start():
+        def on_race_start(data=None):
             self.race_started = True
             self.countdown = 0
 

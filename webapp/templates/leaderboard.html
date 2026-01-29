@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Leaderboard</h1>
+
+{% if entries %}
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Player</th>
+            <th>Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in entries %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ entry.player_name }}</td>
+            <td>{{ "%.3f"|format(entry.time_ms / 1000) }}s</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No scores yet.</p>
+{% endif %}
+{% endblock %}
