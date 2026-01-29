@@ -11,6 +11,7 @@ class Network:
         self.room_id = None
         self.opponent_name = ""
         self.opponent_pos = (0, 0)
+        self.opponent_level = 1
         self.countdown = 0
         self.race_started = False
         self.race_result = None
@@ -53,6 +54,7 @@ class Network:
         @self.sio.on("opponent_pos")
         def on_opponent_pos(data):
             self.opponent_pos = (data.get("x", 0), data.get("y", 0))
+            self.opponent_level = data.get("level", 1)
 
         @self.sio.on("race_result")
         def on_race_result(data):
@@ -80,9 +82,9 @@ class Network:
         if self.connected:
             self.sio.emit("join_queue", {"name": name})
 
-    def send_position(self, x, y):
+    def send_position(self, x, y, level):
         if self.connected and self.race_started:
-            self.sio.emit("player_pos", {"x": x, "y": y})
+            self.sio.emit("player_pos", {"x": x, "y": y, "level": level})
 
     def send_finish(self, time_ms):
         if self.connected:
@@ -94,6 +96,7 @@ class Network:
         self.room_id = None
         self.opponent_name = ""
         self.opponent_pos = (0, 0)
+        self.opponent_level = 1
         self.countdown = 0
         self.race_started = False
         self.race_result = None

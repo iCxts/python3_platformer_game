@@ -126,47 +126,45 @@ class ResultScreen:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.title_font = pygame.font.Font(None, 72)
-        self.time_font = pygame.font.Font(None, 96)
+        self.time_font = pygame.font.Font(None, 72)
         self.label_font = pygame.font.Font(None, 36)
         self.final_time = "00:00.000"
         self.player_name = ""
+        self.is_multiplayer = False
 
         btn_width, btn_height = 200, 50
         btn_x = screen_width // 2 - btn_width // 2
-        self.menu_button = Button(btn_x, screen_height // 2 + 120, btn_width, btn_height, "Main Menu")
-        self.retry_button = Button(btn_x, screen_height // 2 + 50, btn_width, btn_height, "Play Again")
+        self.menu_button = Button(btn_x, screen_height - 80, btn_width, btn_height, "Main Menu")
 
-    def set_result(self, player_name, final_time):
+    def set_result(self, player_name, final_time, is_multiplayer=False):
         self.player_name = player_name
         self.final_time = final_time
+        self.is_multiplayer = is_multiplayer
 
     def update(self, mouse_pos):
         self.menu_button.update(mouse_pos)
-        self.retry_button.update(mouse_pos)
 
     def draw(self, surface):
-        title = self.title_font.render("Level Complete!", True, WHITE)
-        title_rect = title.get_rect(center=(self.screen_width // 2, 120))
+        title_text = "Race Complete!" if self.is_multiplayer else "Level Complete!"
+        title = self.title_font.render(title_text, True, WHITE)
+        title_rect = title.get_rect(center=(self.screen_width // 2, 80))
         surface.blit(title, title_rect)
 
         name_surf = self.label_font.render(f"Player: {self.player_name}", True, WHITE)
-        name_rect = name_surf.get_rect(center=(self.screen_width // 2, 200))
+        name_rect = name_surf.get_rect(center=(self.screen_width // 2, 150))
         surface.blit(name_surf, name_rect)
 
-        label = self.label_font.render("Final Time", True, WHITE)
-        label_rect = label.get_rect(center=(self.screen_width // 2, 280))
+        label = self.label_font.render("Your Time", True, (150, 150, 150))
+        label_rect = label.get_rect(center=(self.screen_width // 2, 200))
         surface.blit(label, label_rect)
 
         time_surf = self.time_font.render(self.final_time, True, (100, 255, 100))
-        time_rect = time_surf.get_rect(center=(self.screen_width // 2, 350))
+        time_rect = time_surf.get_rect(center=(self.screen_width // 2, 250))
         surface.blit(time_surf, time_rect)
 
-        self.retry_button.draw(surface)
         self.menu_button.draw(surface)
 
     def handle_click(self, mouse_pos):
         if self.menu_button.is_clicked(mouse_pos, True):
             return "menu"
-        if self.retry_button.is_clicked(mouse_pos, True):
-            return "retry"
         return None

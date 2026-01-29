@@ -65,6 +65,7 @@ def register_socket_events(socketio):
 
         x = data.get("x", 0)
         y = data.get("y", 0)
+        level = data.get("level", 1)
 
         for player in room.players:
             if player.sid == request.sid:
@@ -73,7 +74,7 @@ def register_socket_events(socketio):
 
         opponent = room.get_opponent(request.sid)
         if opponent:
-            emit("opponent_pos", {"x": x, "y": y}, to=opponent.sid)
+            emit("opponent_pos", {"x": x, "y": y, "level": level}, to=opponent.sid)
 
     @socketio.on("player_finish")
     def on_player_finish(data):
@@ -101,16 +102,12 @@ def register_socket_events(socketio):
             return
 
         room.record_finish(player_name, time_ms)
+        room_manager.finish_room(room.room_id)
 
-        if room.all_finished():
-            room_manager.finish_room(room.room_id)
-
-            winner = room.get_winner()
-
-            emit("race_result", {
-                "winner": winner,
-                "times": room.finish_times
-            }, to=room.room_id)
+        emit("race_result", {
+            "winner": player_name,
+            "times": room.finish_times
+        }, to=room.room_id)
 
 
 def start_countdown(socketio, room):

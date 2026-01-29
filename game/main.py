@@ -228,8 +228,12 @@ while running:
             player.rect.topleft = level.spawn
 
         if is_multiplayer:
-            network.send_position(player.rect.x, player.rect.y)
+            network.send_position(player.rect.x, player.rect.y, current_level)
             opponent.update(network.opponent_pos)
+            if network.opponent_level == current_level:
+                opponent.show()
+            else:
+                opponent.hide()
 
         level.draw(screen, camera_offset)
 
@@ -248,16 +252,22 @@ while running:
             screen.blit(level_text, (SCREEN_WIDTH - level_text.get_width() - 20, 20))
 
         if is_multiplayer:
-            vs_font = pygame.font.Font(None, 28)
-            vs_text = vs_font.render(f"VS {network.opponent_name}", True, (255, 200, 100))
-            vs_bg = pygame.Surface((vs_text.get_width() + 20, vs_text.get_height() + 10), pygame.SRCALPHA)
-            vs_bg.fill((0, 0, 0, 150))
-            screen.blit(vs_bg, (SCREEN_WIDTH - vs_text.get_width() - 30, 15))
-            screen.blit(vs_text, (SCREEN_WIDTH - vs_text.get_width() - 20, 20))
+            info_font = pygame.font.Font(None, 28)
+            small_font = pygame.font.Font(None, 24)
 
-            level_font = pygame.font.Font(None, 24)
-            level_text = level_font.render(f"Level {current_level}/{TOTAL_LEVELS}", True, WHITE)
-            screen.blit(level_text, (SCREEN_WIDTH - level_text.get_width() - 20, 50))
+            vs_text = info_font.render(f"VS {network.opponent_name}", True, (255, 200, 100))
+            level_text = small_font.render(f"You: Level {current_level}/{TOTAL_LEVELS}", True, WHITE)
+            opp_level_text = small_font.render(f"Opponent: Level {network.opponent_level}/{TOTAL_LEVELS}", True, (150, 150, 150))
+
+            box_width = max(vs_text.get_width(), level_text.get_width(), opp_level_text.get_width()) + 20
+            box_height = 80
+            info_bg = pygame.Surface((box_width, box_height), pygame.SRCALPHA)
+            info_bg.fill((0, 0, 0, 150))
+            screen.blit(info_bg, (SCREEN_WIDTH - box_width - 10, 10))
+
+            screen.blit(vs_text, (SCREEN_WIDTH - box_width, 15))
+            screen.blit(level_text, (SCREEN_WIDTH - box_width, 40))
+            screen.blit(opp_level_text, (SCREEN_WIDTH - box_width, 60))
 
         if level.check_finish(player):
             current_level += 1
@@ -268,15 +278,18 @@ while running:
                 if is_multiplayer:
                     network.send_finish(final_time)
                 submit_score(player_name, final_time)
-                result_screen.set_result(player_name, timer.format_time())
+                result_screen.set_result(player_name, timer.format_time(), is_multiplayer)
                 game_state = STATE_RESULT
 
         if is_multiplayer and network.opponent_disconnected:
             final_time = timer.stop()
-            result_screen.set_result(player_name, f"{timer.format_time()} (Opponent left)")
+            result_screen.set_result(player_name, f"{timer.format_time()} (Opponent left)", True)
             game_state = STATE_RESULT
 
         if is_multiplayer and network.race_result:
+            timer.stop()
+            my_time = network.race_result.get("times", {}).get(player_name, 0)
+            result_screen.set_result(player_name, timer.format_time(my_time) if my_time else "DNF", True)
             game_state = STATE_RESULT
 
     elif game_state == STATE_RESULT:
@@ -285,44 +298,46 @@ while running:
         result_screen.draw(screen)
 
         if is_multiplayer and network.race_result:
-            result_font = pygame.font.Font(None, 56)
-            times_font = pygame.font.Font(None, 32)
+            result_font = pygame.font.Font(None, 72)
+            times_font = pygame.font.Font(None, 36)
             winner = network.race_result.get("winner", "")
             times = network.race_result.get("times", {})
 
             if winner == player_name:
-                win_text = result_font.render("You Win!", True, (100, 255, 100))
+                win_text = result_font.render("YOU WIN!", True, (100, 255, 100))
             else:
-                win_text = result_font.render(f"{winner} Wins!", True, (255, 100, 100))
-            win_rect = win_text.get_rect(center=(SCREEN_WIDTH // 2, 420))
+                win_text = result_font.render("YOU LOSE", True, (255, 100, 100))
+            win_rect = win_text.get_rect(center=(SCREEN_WIDTH // 2, 340))
             screen.blit(win_text, win_rect)
 
-            y_offset = 470
-            for name, time_ms in sorted(times.items(), key=lambda x: x[1]):
-                time_str = f"{name}: {time_ms // 1000:02d}:{(time_ms % 60000) // 1000:02d}.{time_ms % 1000:03d}"
-                color = (100, 255, 100) if name == player_name else (200, 200, 200)
+            results_label = times_font.render("Results:", True, (150, 150, 150))
+            screen.blit(results_label, (SCREEN_WIDTH // 2 - 100, 410))
+
+            y_offset = 450
+            for name in [winner] + [n for n in times.keys() if n != winner]:
+                if name in times:
+                    time_ms = times[name]
+                    mins = time_ms // 60000
+                    secs = (time_ms % 60000) // 1000
+                    millis = time_ms % 1000
+                    time_str = f"{mins:02d}:{secs:02d}.{millis:03d}"
+                    status = "WINNER" if name == winner else ""
+                else:
+                    time_str = "DNF"
+                    status = ""
+
+                color = (255, 215, 0) if name == winner else (200, 200, 200)
+                name_text = times_font.render(f"{name}:", True, color)
                 time_text = times_font.render(time_str, True, color)
-                time_rect = time_text.get_rect(center=(SCREEN_WIDTH // 2, y_offset))
-                screen.blit(time_text, time_rect)
-                y_offset += 35
+
+                screen.blit(name_text, (SCREEN_WIDTH // 2 - 100, y_offset))
+                screen.blit(time_text, (SCREEN_WIDTH // 2 + 50, y_offset))
+                y_offset += 40
 
         if mouse_click:
             clicked = result_screen.handle_click(mouse_pos)
             if clicked == "menu":
                 reset_to_menu()
-            elif clicked == "retry":
-                if is_multiplayer:
-                    network.reset()
-                    if network.connect():
-                        network.join_queue(player_name)
-                        game_state = STATE_WAITING
-                    else:
-                        reset_to_menu()
-                else:
-                    current_level = 1
-                    timer.reset()
-                    start_game()
-                    game_state = STATE_PLAYING
 
     pygame.display.flip()
     clock.tick(FPS)
