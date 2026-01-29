@@ -1,0 +1,30 @@
+{
+    "name": "Level 4",
+    "tile_size": 32,
+    "death_height": 30,
+    "spawn": {"x": 2, "y": 18},
+    "finish": {"x": 130, "y": 4},
+    "tiles": [
+        {"type": "ground", "x": 0, "y": 20, "width": 8, "height": 3},
+        {"type": "platform", "x": 11, "y": 18, "width": 3, "height": 1},
+        {"type": "platform", "x": 17, "y": 15, "width": 3, "height": 1},
+        {"type": "platform", "x": 23, "y": 12, "width": 2, "height": 1},
+        {"type": "platform", "x": 28, "y": 9, "width": 2, "height": 1},
+        {"type": "platform", "x": 33, "y": 12, "width": 2, "height": 1},
+        {"type": "platform", "x": 38, "y": 15, "width": 2, "height": 1},
+        {"type": "ground", "x": 43, "y": 20, "width": 6, "height": 3},
+        {"type": "platform", "x": 52, "y": 18, "width": 2, "height": 1},
+        {"type": "platform", "x": 58, "y": 15, "width": 2, "height": 1},
+        {"type": "platform", "x": 64, "y": 12, "width": 2, "height": 1},
+        {"type": "platform", "x": 70, "y": 9, "width": 2, "height": 1},
+        {"type": "platform", "x": 76, "y": 6, "width": 2, "height": 1},
+        {"type": "platform", "x": 82, "y": 9, "width": 2, "height": 1},
+        {"type": "platform", "x": 88, "y": 12, "width": 2, "height": 1},
+        {"type": "ground", "x": 93, "y": 20, "width": 5, "height": 3},
+        {"type": "platform", "x": 101, "y": 17, "width": 2, "height": 1},
+        {"type": "platform", "x": 107, "y": 14, "width": 2, "height": 1},
+        {"type": "platform", "x": 113, "y": 11, "width": 2, "height": 1},
+        {"type": "platform", "x": 119, "y": 8, "width": 2, "height": 1},
+        {"type": "platform", "x": 127, "y": 6, "width": 6, "height": 1}
+    ]
+}
