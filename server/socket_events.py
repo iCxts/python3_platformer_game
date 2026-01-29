@@ -14,24 +14,14 @@ def register_socket_events(socketio):
     @socketio.on("disconnect")
     def on_disconnect():
         print(f"Client disconnected: {request.sid}")
-
         room = room_manager.remove_player(request.sid)
-
         if room:
             for player in room.players:
                 emit("opponent_disconnect", {}, to=player.sid)
 
     @socketio.on("join_queue")
     def on_join_queue(data):
-        name = data.get("name", "").strip()
-
-        if not name:
-            emit("error", {"message": "Name is required"})
-            return
-
-        if len(name) > 20:
-            name = name[:20]
-
+        name = data.get("name", "Player")
         player = Player(sid=request.sid, name=name)
         match = room_manager.add_to_queue(player)
 
@@ -59,7 +49,6 @@ def register_socket_events(socketio):
     @socketio.on("player_pos")
     def on_player_pos(data):
         room = room_manager.get_player_room(request.sid)
-
         if not room or room.state != "racing":
             return
 
@@ -79,18 +68,10 @@ def register_socket_events(socketio):
     @socketio.on("player_finish")
     def on_player_finish(data):
         room = room_manager.get_player_room(request.sid)
-
         if not room or room.state != "racing":
             return
 
-        time_ms = data.get("time_ms")
-        if time_ms is None:
-            return
-
-        try:
-            time_ms = int(time_ms)
-        except (ValueError, TypeError):
-            return
+        time_ms = int(data.get("time_ms", 0))
 
         player_name = None
         for player in room.players:
@@ -98,26 +79,21 @@ def register_socket_events(socketio):
                 player_name = player.name
                 break
 
-        if not player_name:
-            return
-
-        room.record_finish(player_name, time_ms)
-        room_manager.finish_room(room.room_id)
-
-        emit("race_result", {
-            "winner": player_name,
-            "times": room.finish_times
-        }, to=room.room_id)
+        if player_name:
+            room.record_finish(player_name, time_ms)
+            room_manager.finish_room(room.room_id)
+            emit("race_result", {
+                "winner": player_name,
+                "times": room.finish_times
+            }, to=room.room_id)
 
 
 def start_countdown(socketio, room):
     def countdown_thread():
         room.state = "countdown"
-
         for count in [3, 2, 1]:
             socketio.emit("countdown", {"count": count}, to=room.room_id)
             socketio.sleep(1)
-
         room_manager.start_race(room.room_id)
         socketio.emit("race_start", {}, to=room.room_id)
 

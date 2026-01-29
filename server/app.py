@@ -19,18 +19,11 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = config.SQLALCHEMY_DATABASE_URI
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = config.SQLALCHEMY_TRACK_MODIFICATIONS
 
-    CORS(app, origins=config.CORS_ORIGINS)
-
+    CORS(app)
     init_db(app)
-
     app.register_blueprint(api)
 
-    socketio = SocketIO(
-        app,
-        cors_allowed_origins=config.CORS_ORIGINS,
-        async_mode="threading"
-    )
-
+    socketio = SocketIO(app, cors_allowed_origins="*")
     register_socket_events(socketio)
 
     @app.route("/")
@@ -40,13 +33,7 @@ def create_app():
     @app.route("/leaderboard")
     def leaderboard_page():
         from models import LeaderboardEntry
-
-        entries = (
-            LeaderboardEntry.query
-            .order_by(LeaderboardEntry.time_ms.asc())
-            .limit(10)
-            .all()
-        )
+        entries = LeaderboardEntry.query.order_by(LeaderboardEntry.time_ms.asc()).limit(10).all()
         return render_template("leaderboard.html", entries=entries)
 
     return app, socketio
