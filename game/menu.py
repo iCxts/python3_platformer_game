@@ -1,19 +1,29 @@
 import pygame
-from streamlit import image
 from config import *
 
+
 class Button:
-    def __init__(self, x, y, text, image):
-        self.image = image
+    def __init__(self, x, y, width, height, text, image=None):
+        if image:
+            self.image = pygame.transform.scale(image, (width, height))
+        else:
+            self.image = pygame.Surface((width, height))
+            self.image.fill(BUTTON_COLOR)
         self.rect = self.image.get_rect(topleft=(x, y))
         self.text = text
         self.font = pygame.font.SysFont(None, 36)
+        self.hovered = False
 
     def update(self, mouse_pos):
-        pass
-    
+        self.hovered = self.rect.collidepoint(mouse_pos)
+
     def draw(self, surface):
-        surface.blit(self.image, self.rect)
+        if self.hovered:
+            hover_img = self.image.copy()
+            hover_img.fill(BUTTON_HOVER_COLOR, special_flags=pygame.BLEND_RGB_ADD)
+            surface.blit(hover_img, self.rect)
+        else:
+            surface.blit(self.image, self.rect)
         text_surf = self.font.render(self.text, True, BUTTON_TEXT_COLOR)
         text_rect = text_surf.get_rect(center=self.rect.center)
         surface.blit(text_surf, text_rect)
@@ -21,38 +31,36 @@ class Button:
     def is_clicked(self, mouse_pos, mouse_clicked):
         return self.rect.collidepoint(mouse_pos) and mouse_clicked
 
+
 class Menu:
     def __init__(self, screen_width, screen_height):
         self.title_font = pygame.font.Font(None, 72)
 
-        self.button_img = pygame.image.load(
-            "game/assets/ui/button.png"
-        ).convert_alpha()
+        self.button_img = load_image("ui/button.png", BUTTON_COLOR, (200, 60))
 
-        btn_w = self.button_img.get_width()
+        btn_w, btn_h = 200, 60
         btn_x = screen_width // 2 - btn_w // 2
         start_y = screen_height // 2 - 50
         spacing = 80
 
         self.buttons = {
-            "singleplayer": Button(btn_x, start_y, "Singleplayer", self.button_img),
-            "multiplayer": Button(btn_x, start_y + spacing, "Multiplayer", self.button_img),
-            "leaderboards": Button(btn_x, start_y + 2 * spacing, "Leaderboards", self.button_img),
+            "singleplayer": Button(btn_x, start_y, btn_w, btn_h, "Singleplayer", self.button_img),
+            "multiplayer": Button(btn_x, start_y + spacing, btn_w, btn_h, "Multiplayer", self.button_img),
+            "leaderboards": Button(btn_x, start_y + 2 * spacing, btn_w, btn_h, "Leaderboards", self.button_img),
         }
 
-        
     def update(self, mouse_pos):
         for btn in self.buttons.values():
             btn.update(mouse_pos)
-    
+
     def draw(self, surface):
         title = self.title_font.render(TITLE, True, WHITE)
         title_rect = title.get_rect(center=(SCREEN_WIDTH // 2, 150))
         surface.blit(title, title_rect)
-        
+
         for btn in self.buttons.values():
             btn.draw(surface)
-    
+
     def handle_click(self, mouse_pos, mouse_clicked):
         for name, btn in self.buttons.items():
             if btn.is_clicked(mouse_pos, mouse_clicked):

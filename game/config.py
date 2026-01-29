@@ -34,7 +34,7 @@ MAX_FALL_SPEED = 15
 TILE_SIZE = 32
 DEATH_Y_LEVEL = 20 * TILE_SIZE
 
-SERVER_URL = "http://localhost:5000"
+SERVER_URL = "http://localhost:3000"
 
 COUNTDOWN_SECONDS = 3
 
