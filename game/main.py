@@ -56,7 +56,7 @@ while running:
         menu.update(mouse_pos)
         menu.draw(screen)
         if mouse_click:
-            clicked = menu.handle_click(mouse_pos)
+            clicked = menu.handle_click(mouse_pos, mouse_click)
             if clicked == "singleplayer":
                 start_game()
                 game_state = STATE_PLAYING

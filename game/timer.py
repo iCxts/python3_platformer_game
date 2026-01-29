@@ -7,7 +7,10 @@ class Timer:
         self.elapsed = 0
         self.running = False
         self.font = pygame.font.Font(None, 48)
-    
+        self.bg = pygame.image.load(
+            "game/assets/ui/timer_bg.png"
+        ).convert_alpha()
+
     def start(self):
         if not self.running:
             self.start_time = pygame.time.get_ticks()
@@ -45,3 +48,5 @@ class Timer:
         bg_rect.inflate_ip(10, 6)
         pygame.draw.rect(surface, BLACK, bg_rect, border_radius=4)
         surface.blit(text, (x, y))
+        surface.blit(self.bg, (20, 20))
+        surface.blit(text, (40, 30))
